@@ -1,4 +1,4 @@
-use chrono::{Duration, Utc};
+use chrono::{Duration, Local, Utc};
 use serde::Serialize;
 use serde_wasm_bindgen;
 use wasm_bindgen::prelude::*;
@@ -19,6 +19,13 @@ struct WeatherPrediction {
     start_time: String,
     time_until: String,
     alarm_macro: String,
+}
+
+#[derive(Serialize)]
+pub struct TimeData {
+    utc_time: String,
+    local_time: String,
+    eorzean_time: String,
 }
 
 #[wasm_bindgen]
@@ -66,6 +73,33 @@ pub fn get_weather_predictions() -> JsValue {
     }
 
     serde_wasm_bindgen::to_value(&predictions).unwrap()
+}
+
+#[wasm_bindgen]
+pub fn get_time_data() -> JsValue {
+    let now = Utc::now();
+
+    // UTC Time
+    let utc_time = now.format("%H:%M:%S").to_string();
+
+    // Local Time
+    let local_time = Local::now().format("%H:%M:%S").to_string();
+
+    // Eorzean Time (1 Eorzean hour = 175 seconds real time)
+    let eorzean_multiplier = 3600.0 / 175.0;
+    let eorzean_time = now.timestamp_millis() as f64 * eorzean_multiplier;
+    let eorzean_seconds = (eorzean_time / 1000.0) as u64 % 86400;
+    let eorzean_hours = eorzean_seconds / 3600;
+    let eorzean_minutes = (eorzean_seconds % 3600) / 60;
+    let eorzean_time = format!("{:02}:{:02}", eorzean_hours, eorzean_minutes);
+
+    let time_data = TimeData {
+        utc_time,
+        local_time,
+        eorzean_time,
+    };
+
+    serde_wasm_bindgen::to_value(&time_data).unwrap()
 }
 
 fn predict_weather(interval_start: chrono::DateTime<Utc>) -> &'static str {

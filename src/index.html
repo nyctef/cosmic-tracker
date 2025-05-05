@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WASM Table</title>
+    <title>Cosmic tracker</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -23,7 +23,8 @@
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       }
 
-      table th, table td {
+      table th,
+      table td {
         padding: 12px 15px;
         border: 1px solid #ddd;
       }
@@ -43,6 +44,21 @@
     </style>
   </head>
   <body>
+    <header
+      style="
+        background-color: #333;
+        color: #fff;
+        padding: 10px;
+        text-align: center;
+        font-size: 18px;
+      "
+    >
+      <div id="time-container">
+        <span id="utc-time">Server time: --:--:--</span> |
+        <span id="local-time">Local time: --:--:--</span> |
+        <span id="eorzean-time">Eorzean time: --:--:--</span>
+      </div>
+    </header>
     <div id="table-container"></div>
     <script type="module" src="main.js"></script>
   </body>

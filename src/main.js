@@ -1,8 +1,21 @@
-import init, { get_weather_predictions } from "../pkg/wasm_table_project.js";
+import init, {
+  get_weather_predictions,
+  get_time_data,
+} from "../pkg/wasm_table_project.js";
 
 async function run() {
   await init();
   const tableContainer = document.getElementById("table-container");
+  const utcTimeElement = document.getElementById("utc-time");
+  const localTimeElement = document.getElementById("local-time");
+  const eorzeanTimeElement = document.getElementById("eorzean-time");
+
+  function updateTime() {
+    const timeData = get_time_data();
+    utcTimeElement.textContent = `UTC Time: ${timeData.utc_time}`;
+    localTimeElement.textContent = `Local Time: ${timeData.local_time}`;
+    eorzeanTimeElement.textContent = `Eorzean Time: ${timeData.eorzean_time}`;
+  }
 
   function showToast(message) {
     const toast = document.createElement("div");
@@ -57,6 +70,7 @@ async function run() {
     });
   }
 
+  setInterval(updateTime, 1000);
   renderWeatherTable();
   setInterval(renderWeatherTable, 5000);
 }
