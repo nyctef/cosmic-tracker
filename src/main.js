@@ -1,25 +1,22 @@
-import init, { get_table_data } from "../pkg/wasm_table_project.js";
+import init, { get_weather_predictions } from "../pkg/wasm_table_project.js";
 
 async function run() {
   await init();
   const tableContainer = document.getElementById("table-container");
 
-  function renderTable() {
-    const data = get_table_data();
-    let tableHtml = "<table>";
-    data.forEach((row) => {
-      tableHtml += "<tr>";
-      row.cells.forEach((cell) => {
-        tableHtml += `<td>${cell}</td>`;
-      });
-      tableHtml += "</tr>";
+  function renderWeatherTable() {
+    const predictions = get_weather_predictions();
+    let tableHtml =
+      "<table><tr><th>Weather</th><th>Start Time</th><th>Time Until</th></tr>";
+    predictions.forEach((prediction) => {
+      tableHtml += `<tr><td>${prediction.weather}</td><td>${prediction.start_time}</td><td>${prediction.time_until}</td></tr>`;
     });
     tableHtml += "</table>";
     tableContainer.innerHTML = tableHtml;
   }
 
-  renderTable();
-  setInterval(renderTable, 5000);
+  renderWeatherTable();
+  setInterval(renderWeatherTable, 5000);
 }
 
 run();
