@@ -9,8 +9,40 @@
         font-family: Arial, sans-serif;
         margin: 0;
         padding: 0;
-        background-color: #f9f9f9;
-        color: #333;
+        background-color: var(--background-color);
+        color: var(--text-color);
+      }
+
+      :root {
+        --background-color: #f9f9f9;
+        --text-color: #333;
+        --table-background-color: #fff;
+        --table-text-color: #333;
+        --table-header-background-color: #f4f4f4;
+        --table-header-text-color: #000;
+        --table-row-even-background-color: #f9f9f9;
+        --table-row-odd-background-color: #fff;
+        --toggle-background: #ccc;
+        --toggle-knob: #fff;
+        --toggle-icon-color: #000;
+      }
+
+      [data-theme="dark"] {
+        --background-color: #333;
+        --text-color: #f9f9f9;
+        --table-background-color: #444;
+        --table-text-color: #f9f9f9;
+        --table-header-background-color: #555;
+        --table-header-text-color: #fff;
+        --table-row-even-background-color: #555;
+        --table-row-odd-background-color: #444;
+        --toggle-background: #4caf50;
+        --toggle-knob: #333;
+        --toggle-icon-color: #fff;
+      }
+
+      [data-theme="dark"] #theme-toggle::before {
+        transform: translateX(25px);
       }
 
       table {
@@ -19,7 +51,8 @@
         margin: 20px 0;
         font-size: 16px;
         text-align: left;
-        background-color: #fff;
+        background-color: var(--table-background-color);
+        color: var(--table-text-color);
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       }
 
@@ -30,16 +63,52 @@
       }
 
       table th {
-        background-color: #f4f4f4;
+        background-color: var(--table-header-background-color);
+        color: var(--table-header-text-color);
         font-weight: bold;
       }
 
       table tr:nth-child(even) {
-        background-color: #f9f9f9;
+        background-color: var(--table-row-even-background-color);
       }
 
       table tr:nth-child(odd) {
-        background-color: #fff;
+        background-color: var(--table-row-odd-background-color);
+      }
+
+      /* iOS-style toggle button */
+      #theme-toggle {
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+        display: inline-block;
+        width: 50px;
+        height: 25px;
+        background-color: var(--toggle-background);
+        border-radius: 25px;
+        border: none;
+        cursor: pointer;
+        outline: none;
+        transition: background-color 0.3s ease;
+        font-size: 16px;
+        color: var(--toggle-icon-color);
+      }
+
+      #theme-toggle::before {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 21px;
+        height: 21px;
+        background-color: var(--toggle-knob);
+        border-radius: 50%;
+        transition: transform 0.3s ease;
+      }
+
+      header {
+        position: relative;
       }
     </style>
   </head>
@@ -58,8 +127,20 @@
         <span id="local-time">Local time: --:--:--</span> |
         <span id="eorzean-time">Eorzean time: --:--:--</span>
       </div>
+      <button id="theme-toggle" aria-label="Toggle Dark Mode">☀️</button>
     </header>
     <div id="table-container"></div>
     <script type="module" src="main.js"></script>
+    <script>
+      const themeToggle = document.getElementById("theme-toggle");
+      themeToggle.addEventListener("click", () => {
+        const theme = document.body.getAttribute("data-theme");
+        document.body.setAttribute(
+          "data-theme",
+          "dark" === theme ? "" : "dark"
+        );
+        themeToggle.textContent = "dark" === theme ? "☀️" : "🌙";
+      });
+    </script>
   </body>
 </html>
