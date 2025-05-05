@@ -18,6 +18,7 @@ struct WeatherPrediction {
     weather: String,
     start_time: String,
     time_until: String,
+    alarm_macro: String,
 }
 
 #[wasm_bindgen]
@@ -49,10 +50,16 @@ pub fn get_weather_predictions() -> JsValue {
 
         if weather != "Fair Skies" {
             let time_until = interval_start - now;
+            let alarm_macro = format!(
+                "/alarm \"{} in 1m\" st {} 1 se00",
+                weather,
+                interval_start.format("%H%M")
+            );
             predictions.push(WeatherPrediction {
                 weather: weather.to_string(),
                 start_time: interval_start.format("%H:%M").to_string(),
                 time_until: format_interval(time_until),
+                alarm_macro,
             });
             found += 1;
         }
