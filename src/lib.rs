@@ -98,85 +98,87 @@ pub fn get_time_data() -> JsValue {
 
 #[wasm_bindgen]
 pub fn get_mission_schedule() -> JsValue {
-    let mission_data = vec![
+    let mut mission_data = vec![
         MissionData {
             class_name: "Carpenter".to_string(),
-            missions: vec!["High-durability Fiberboard".to_string()],
-            time_period: "12:00 PM - 1:59 PM".to_string(),
-            target_hour: 12,
+            missions: vec!["A-1: Packing Materials I".to_string()],
+            time_period: "12:00 AM - 1:59 AM".to_string(),
+            target_hour: 0,
             target_minute: 0,
         },
         MissionData {
             class_name: "Blacksmith".to_string(),
-            missions: vec!["High-performance Drone Materials I".to_string()],
-            time_period: "2:00 PM - 3:59 PM".to_string(),
-            target_hour: 14,
+            missions: vec!["A-1: High-performance Drone Materials I".to_string()],
+            time_period: "4:00AM - 5:59AM".to_string(),
+            target_hour: 4,
             target_minute: 0,
         },
         MissionData {
             class_name: "Armorer".to_string(),
-            missions: vec!["Starship Building Material Processing".to_string()],
-            time_period: "4:00 PM - 5:59 PM".to_string(),
-            target_hour: 16,
+            missions: vec!["A-1: High-performance Drone Materials I".to_string()],
+            time_period: "8:00AM - 9:59AM".to_string(),
+            target_hour: 8,
             target_minute: 0,
         },
         MissionData {
             class_name: "Goldsmith".to_string(),
-            missions: vec!["Cosmotized Equipment Materials III".to_string()],
-            time_period: "6:00 PM - 7:59 PM".to_string(),
-            target_hour: 18,
+            missions: vec!["A-1: High-performance Drone Materials I".to_string()],
+            time_period: "12:00PM - 1:59PM".to_string(),
+            target_hour: 12,
             target_minute: 0,
         },
         MissionData {
             class_name: "Leatherworker".to_string(),
-            missions: vec!["Cosmic Suits II".to_string()],
-            time_period: "8:00 PM - 9:59 PM".to_string(),
-            target_hour: 20,
+            missions: vec!["A-1: Packing Materials I".to_string()],
+            time_period: "4:00PM - 5:59PM".to_string(),
+            target_hour: 16,
             target_minute: 0,
         },
         MissionData {
             class_name: "Weaver".to_string(),
-            missions: vec!["High-grade Composite Fiber".to_string()],
-            time_period: "10:00 PM - 11:59 PM".to_string(),
-            target_hour: 22,
+            missions: vec!["A-1: Packing Materials I".to_string()],
+            time_period: "8:00PM - 9:59PM".to_string(),
+            target_hour: 20,
             target_minute: 0,
         },
         MissionData {
             class_name: "Alchemist".to_string(),
-            missions: vec!["Lunar Seafood Processing".to_string()],
+            missions: vec!["A-1: Nutrient Jelly Materials I".to_string()],
             time_period: "12:00 AM - 1:59 AM".to_string(),
             target_hour: 0,
             target_minute: 0,
         },
         MissionData {
             class_name: "Culinarian".to_string(),
-            missions: vec!["Nutrient Supplement Jelly".to_string()],
-            time_period: "2:00 AM - 3:59 AM".to_string(),
-            target_hour: 2,
-            target_minute: 0,
-        },
-        MissionData {
-            class_name: "Miner".to_string(),
-            missions: vec!["Rare Siderite Extraction".to_string()],
-            time_period: "4:00 AM - 5:59 AM".to_string(),
+            missions: vec!["A-1: Nutrient-rich Foodstuffs I".to_string()],
+            time_period: "4:00AM - 5:59AM".to_string(),
             target_hour: 4,
             target_minute: 0,
         },
         MissionData {
+            class_name: "Miner".to_string(),
+            missions: vec!["A-1: Fine-grade Air Filter Materials I".to_string()],
+            time_period: "2:00AM - 3:59AM".to_string(),
+            target_hour: 2,
+            target_minute: 0,
+        },
+        MissionData {
             class_name: "Botanist".to_string(),
-            missions: vec!["Folkloric Materials III".to_string()],
-            time_period: "6:00 AM - 7:59 AM".to_string(),
-            target_hour: 6,
+            missions: vec!["A-1: Fine-grade Air Filter Materials I".to_string()],
+            time_period: "10:00AM - 11:59AM".to_string(),
+            target_hour: 10,
             target_minute: 0,
         },
         MissionData {
             class_name: "Fisher".to_string(),
-            missions: vec!["Large Aquatic Specimens".to_string()],
-            time_period: "8:00 AM - 9:59 AM".to_string(),
-            target_hour: 8,
+            missions: vec!["A-1: Aetherochemical Samples I".to_string()],
+            time_period: "6:00AM - 7:59AM".to_string(),
+            target_hour: 6,
             target_minute: 0,
         },
     ];
+
+    mission_data.sort_by_key(|d| d.target_hour);
 
     let schedule: Vec<MissionInfo> = mission_data
         .into_iter()
