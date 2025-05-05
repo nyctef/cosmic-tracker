@@ -1,6 +1,7 @@
 import init, {
   get_weather_predictions,
   get_time_data,
+  get_mission_schedule,
 } from "../pkg/wasm_table_project.js";
 
 async function run() {
@@ -70,9 +71,30 @@ async function run() {
     });
   }
 
+  async function updateMissionSchedule() {
+    const schedule = get_mission_schedule();
+
+    const tbody = document.querySelector("#mission-schedule tbody");
+    tbody.innerHTML = schedule
+      .map(
+        (mission) => `
+          <tr>
+            <td>${mission.class_name}</td>
+            <td>${mission.missions.join(", ")}</td>
+            <td>${mission.time_period}</td>
+            <td>${mission.interval_until}</td>
+            <td>${mission.next_local_time}</td>
+          </tr>
+        `
+      )
+      .join("");
+  }
+
   setInterval(updateTime, 1000);
   renderWeatherTable();
   setInterval(renderWeatherTable, 5000);
+  setInterval(updateMissionSchedule, 60000); // Update every minute
+  updateMissionSchedule(); // Initial call
 }
 
 run();
