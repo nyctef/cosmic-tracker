@@ -90,11 +90,12 @@ async function run() {
       .join("");
   }
 
+  updateTime();
   setInterval(updateTime, 1000);
   renderWeatherTable();
-  setInterval(renderWeatherTable, 5000);
-  setInterval(updateMissionSchedule, 60000); // Update every minute
-  updateMissionSchedule(); // Initial call
+  setInterval(renderWeatherTable, 1000);
+  updateMissionSchedule();
+  setInterval(updateMissionSchedule, 1000);
 }
 
 run();
