@@ -1,5 +1,7 @@
 use chrono::{DateTime, Duration, Utc};
+use std::cmp::Ordering;
 
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EorzeanTime {
     hours: u64,
     minutes: u64,
@@ -57,5 +59,34 @@ impl EorzeanTime {
 
     pub fn format_hhmm(&self) -> String {
         format!("{:02}:{:02}", self.hours, self.minutes)
+    }
+
+    pub fn plus_hours(&self, hours: u64) -> Self {
+        let total_minutes = self.hours * 60 + self.minutes + hours * 60;
+        let new_hours = (total_minutes / 60) % 24;
+        let new_minutes = total_minutes % 60;
+        EorzeanTime::new(new_hours, new_minutes)
+    }
+}
+
+impl PartialOrd for EorzeanTime {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        let self_total_minutes = self.hours * 60 + self.minutes;
+        let other_total_minutes = other.hours * 60 + other.minutes;
+        self_total_minutes.partial_cmp(&other_total_minutes)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // TODO: tests for other methods
+
+    #[test]
+    fn test_plus_hours() {
+        let eorzean_time = EorzeanTime::new(23, 30);
+        let new_time = eorzean_time.plus_hours(2);
+        assert_eq!(EorzeanTime::new(1, 30), new_time);
     }
 }

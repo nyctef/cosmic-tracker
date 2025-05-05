@@ -182,11 +182,19 @@ pub fn get_mission_schedule() -> JsValue {
         .into_iter()
         .map(|data| {
             let target_time = EorzeanTime::new(data.target_hour, data.target_minute);
+            let current_eorzean_time = EorzeanTime::from_chrono_time(Utc::now());
+            let is_active = current_eorzean_time >= target_time
+                && current_eorzean_time < target_time.plus_hours(2);
+
             MissionInfo {
                 class_name: data.class_name,
                 missions: data.missions,
                 time_period: data.time_period,
-                interval_until: format_interval(target_time.interval_until_chrono()),
+                interval_until: if is_active {
+                    "Active".to_string()
+                } else {
+                    format_interval(target_time.interval_until_chrono())
+                },
                 next_local_time: find_next_local_time(data.target_hour, data.target_minute),
             }
         })
