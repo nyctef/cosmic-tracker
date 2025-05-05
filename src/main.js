@@ -37,16 +37,18 @@ async function run() {
   function renderWeatherTable() {
     const predictions = get_weather_predictions();
     let tableHtml =
-      "<table><tr><th>Weather</th><th>Start Time</th><th>Time Until</th><th>Action</th></tr>";
+      "<table><tr><th>Upcoming weather</th><th>Server time</th><th>Time until</th><th>Alarm macro</th></tr>";
     predictions.forEach((prediction, index) => {
       tableHtml +=
         `<tr><td>${prediction.weather}</td><td>${prediction.start_time}</td><td>${prediction.time_until}</td>` +
-        `<td><button id="copy-button-${index}">Copy Alarm</button></td></tr>`;
+        `<td><button id="copy-button-${index}">Copy</button></td></tr>`;
     });
     tableHtml += "</table>";
     tableContainer.innerHTML = tableHtml;
 
     // Attach event listeners to buttons
+    // since the alarm macros contain double quotes, it's easier/safer to do this in JS rather than
+    // trying to escape the quotes in HTML interpolation
     predictions.forEach((prediction, index) => {
       const button = document.getElementById(`copy-button-${index}`);
       button.addEventListener("click", () =>

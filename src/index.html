@@ -4,6 +4,43 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WASM Table</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f9f9f9;
+        color: #333;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 16px;
+        text-align: left;
+        background-color: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      table th, table td {
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+      }
+
+      table th {
+        background-color: #f4f4f4;
+        font-weight: bold;
+      }
+
+      table tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      table tr:nth-child(odd) {
+        background-color: #fff;
+      }
+    </style>
   </head>
   <body>
     <div id="table-container"></div>
