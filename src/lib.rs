@@ -1,27 +1,29 @@
+use serde::Serialize;
+use serde_wasm_bindgen;
 use wasm_bindgen::prelude::*;
+use wasm_bindgen::JsValue;
 
 pub fn add(left: u64, right: u64) -> u64 {
     left + right
 }
 
+#[derive(Serialize)]
+struct TableRow {
+    cells: Vec<String>,
+}
+
 #[wasm_bindgen]
-pub fn update_table() -> String {
+pub fn get_table_data() -> JsValue {
     let data = vec![
-        vec!["Row 1, Col 1", "Row 1, Col 2"],
-        vec!["Row 2, Col 1", "Row 2, Col 2"],
+        TableRow {
+            cells: vec!["Row 1, Col 1".to_string(), "Row 1, Col 2".to_string()],
+        },
+        TableRow {
+            cells: vec!["Row 2, Col 1".to_string(), "Row 2, Col 2".to_string()],
+        },
     ];
 
-    let mut table_html = String::from("<table>");
-    for row in data {
-        table_html.push_str("<tr>");
-        for cell in row {
-            table_html.push_str(&format!("<td>{}</td>", cell));
-        }
-        table_html.push_str("</tr>");
-    }
-    table_html.push_str("</table>");
-
-    table_html
+    serde_wasm_bindgen::to_value(&data).unwrap()
 }
 
 #[cfg(test)]
