@@ -227,10 +227,13 @@ fn calculate_forecast_target(l_date: chrono::DateTime<Utc>) -> u32 {
 fn format_interval(d: Duration) -> String {
     let hours = d.num_hours();
     let minutes = d.num_minutes() % 60;
+    let seconds = d.num_seconds() % 60;
     if hours > 0 {
         format!("{}h{}m", hours, minutes)
-    } else {
+    } else if minutes > 0 {
         format!("{}m", minutes)
+    } else {
+        format!("{}s", seconds)
     }
 }
 
