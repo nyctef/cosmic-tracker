@@ -5,12 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cosmic tracker</title>
     <style>
+      html,
+      body {
+        height: 100%;
+      }
+
       body {
         font-family: Arial, sans-serif;
         margin: 0;
         padding: 0;
         background-color: var(--background-color);
         color: var(--text-color);
+        display: flex;
+        flex-direction: column;
       }
 
       :root {
@@ -110,6 +117,19 @@
       header {
         position: relative;
       }
+
+      .content {
+        flex: 1 0 auto;
+      }
+
+      footer {
+        flex-shrink: 0;
+        text-align: center;
+        color: gray;
+        font-size: 12px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
     </style>
   </head>
   <body>
@@ -129,7 +149,9 @@
       </div>
       <button id="theme-toggle" aria-label="Toggle Dark Mode">☀️</button>
     </header>
-    <div id="table-container"></div>
+    <div class="content">
+      <div id="table-container"></div>
+    </div>
     <script type="module" src="main.js"></script>
     <script>
       const themeToggle = document.getElementById("theme-toggle");
@@ -142,5 +164,9 @@
         themeToggle.textContent = "dark" === theme ? "☀️" : "🌙";
       });
     </script>
+    <footer>
+      FINAL FANTASY is a registered trademark of Square Enix Holdings Co., Ltd.
+      FF14 copyrighted materials © SQUARE ENIX.
+    </footer>
   </body>
 </html>
