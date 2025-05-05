@@ -1,8 +1,11 @@
+mod eorzean_time;
+
 use chrono::{Duration, Local, Utc};
+use eorzean_time::EorzeanTime;
 use serde::Serialize;
 use serde_wasm_bindgen;
-use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
+use wasm_bindgen::prelude::*;
 
 #[derive(Serialize)]
 struct WeatherPrediction {
@@ -36,62 +39,6 @@ struct MissionData {
     time_period: String,
     target_hour: u64,
     target_minute: u64,
-}
-
-pub struct EorzeanTime {
-    hours: u64,
-    minutes: u64,
-}
-
-impl EorzeanTime {
-    pub fn new(hours: u64, minutes: u64) -> Self {
-        EorzeanTime { hours, minutes }
-    }
-
-    /// Given a specific server time, convert it to Eorzean time.
-    pub fn from_chrono_time(chrono_time: chrono::DateTime<Utc>) -> Self {
-        let eorzean_multiplier = 3600.0 / 175.0;
-        let eorzean_time = chrono_time.timestamp_millis() as f64 * eorzean_multiplier;
-        let eorzean_seconds = (eorzean_time / 1000.0) as u64 % 86400;
-        let hours = eorzean_seconds / 3600;
-        let minutes = (eorzean_seconds % 3600) / 60;
-        EorzeanTime { hours, minutes }
-    }
-
-    /// For this Eorzean time, find the next real-world server time that time will occur.
-    pub fn find_next_chrono_time(&self) -> chrono::DateTime<Utc> {
-        let now = Utc::now();
-        let eorzean_multiplier = 3600.0 / 175.0;
-        let eorzean_time = now.timestamp_millis() as f64 * eorzean_multiplier;
-        let eorzean_seconds = (eorzean_time / 1000.0) as u64 % 86400;
-        let current_eorzean_hours = eorzean_seconds / 3600;
-        let current_eorzean_minutes = (eorzean_seconds % 3600) / 60;
-
-        // Calculate the interval in Eorzean minutes
-        let current_total_minutes = current_eorzean_hours * 60 + current_eorzean_minutes;
-        let target_total_minutes = self.hours * 60 + self.minutes;
-
-        // Adjust for the fact that an Eorzean day is 70 real-world minutes
-        let eorzean_day_minutes = 1440; // Total Eorzean minutes in a day
-        let interval_minutes = if target_total_minutes >= current_total_minutes {
-            target_total_minutes - current_total_minutes
-        } else {
-            eorzean_day_minutes - (current_total_minutes - target_total_minutes)
-        };
-
-        // Convert Eorzean minutes to real-life seconds (70 real-world minutes per Eorzean day)
-        let real_life_seconds =
-            (interval_minutes as f64 * 70.0 * 60.0 / eorzean_day_minutes as f64) as i64;
-
-        // Calculate the target local time
-        now + Duration::seconds(real_life_seconds)
-    }
-
-    pub fn interval_until_chrono(&self) -> chrono::Duration {
-        let now = Utc::now();
-        let target_time = self.find_next_chrono_time();
-        target_time - now
-    }
 }
 
 #[wasm_bindgen]
@@ -136,15 +83,9 @@ pub fn get_weather_predictions() -> JsValue {
 pub fn get_time_data() -> JsValue {
     let now = Utc::now();
 
-    // UTC Time
     let utc_time = now.format("%H:%M:%S").to_string();
-
-    // Local Time
     let local_time = Local::now().format("%H:%M:%S").to_string();
-
-    // Eorzean Time (1 Eorzean hour = 175 seconds real time)
-    let eorzean_time = EorzeanTime::from_chrono_time(now);
-    let eorzean_time = format!("{:02}:{:02}", eorzean_time.hours, eorzean_time.minutes);
+    let eorzean_time = EorzeanTime::from_chrono_time(now).format_hhmm();
 
     let time_data = TimeData {
         utc_time,
@@ -240,10 +181,7 @@ pub fn get_mission_schedule() -> JsValue {
     let schedule: Vec<MissionInfo> = mission_data
         .into_iter()
         .map(|data| {
-            let target_time = EorzeanTime {
-                hours: data.target_hour,
-                minutes: data.target_minute,
-            };
+            let target_time = EorzeanTime::new(data.target_hour, data.target_minute);
             MissionInfo {
                 class_name: data.class_name,
                 missions: data.missions,
