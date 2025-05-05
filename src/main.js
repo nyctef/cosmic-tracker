@@ -50,11 +50,11 @@ async function run() {
   function renderWeatherTable() {
     const predictions = get_weather_predictions();
     let tableHtml =
-      "<table><tr><th>Upcoming weather</th><th>Server time</th><th>Time until</th><th>Alarm macro</th></tr>";
+      "<table><tr><th>Upcoming weather</th><th>Server time</th><th>Local time</th><th>Time until</th><th>Alarm macro</th></tr>";
     predictions.forEach((prediction, index) => {
       tableHtml +=
-        `<tr><td>${prediction.weather}</td><td>${prediction.start_time}</td><td>${prediction.time_until}</td>` +
-        `<td><button id="copy-button-${index}">Copy</button></td></tr>`;
+        `<tr><td>${prediction.weather}</td><td>${prediction.start_time}</td><td>${prediction.local_time}</td><td>${prediction.time_until}</td>` +
+        `<td><button id="copy-button-${index}">Copy Alarm</button></td></tr>`;
     });
     tableHtml += "</table>";
     tableContainer.innerHTML = tableHtml;

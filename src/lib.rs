@@ -17,6 +17,7 @@ struct TableRow {
 struct WeatherPrediction {
     weather: String,
     start_time: String,
+    local_time: String,
     time_until: String,
     alarm_macro: String,
 }
@@ -62,9 +63,14 @@ pub fn get_weather_predictions() -> JsValue {
                 weather,
                 interval_start.format("%H%M")
             );
+            let local_time = interval_start
+                .with_timezone(&Local)
+                .format("%H:%M")
+                .to_string();
             predictions.push(WeatherPrediction {
                 weather: weather.to_string(),
                 start_time: interval_start.format("%H:%M").to_string(),
+                local_time,
                 time_until: format_interval(time_until),
                 alarm_macro,
             });
