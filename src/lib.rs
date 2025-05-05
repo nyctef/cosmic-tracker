@@ -32,13 +32,11 @@ struct MissionInfo {
     next_local_time: String,
 }
 
-#[derive(Serialize)]
 struct MissionData {
     class_name: String,
     missions: Vec<String>,
     time_period: String,
-    target_hour: u64,
-    target_minute: u64,
+    target_time: EorzeanTime,
 }
 
 #[wasm_bindgen]
@@ -103,87 +101,76 @@ pub fn get_mission_schedule() -> JsValue {
             class_name: "Carpenter".to_string(),
             missions: vec!["A-1: Packing Materials I".to_string()],
             time_period: "12:00 AM - 1:59 AM".to_string(),
-            target_hour: 0,
-            target_minute: 0,
+            target_time: EorzeanTime::new(0, 0),
         },
         MissionData {
             class_name: "Blacksmith".to_string(),
             missions: vec!["A-1: High-performance Drone Materials I".to_string()],
             time_period: "4:00AM - 5:59AM".to_string(),
-            target_hour: 4,
-            target_minute: 0,
+            target_time: EorzeanTime::new(4, 0),
         },
         MissionData {
             class_name: "Armorer".to_string(),
             missions: vec!["A-1: High-performance Drone Materials I".to_string()],
             time_period: "8:00AM - 9:59AM".to_string(),
-            target_hour: 8,
-            target_minute: 0,
+            target_time: EorzeanTime::new(8, 0),
         },
         MissionData {
             class_name: "Goldsmith".to_string(),
             missions: vec!["A-1: High-performance Drone Materials I".to_string()],
             time_period: "12:00PM - 1:59PM".to_string(),
-            target_hour: 12,
-            target_minute: 0,
+            target_time: EorzeanTime::new(12, 0),
         },
         MissionData {
             class_name: "Leatherworker".to_string(),
             missions: vec!["A-1: Packing Materials I".to_string()],
             time_period: "4:00PM - 5:59PM".to_string(),
-            target_hour: 16,
-            target_minute: 0,
+            target_time: EorzeanTime::new(16, 0),
         },
         MissionData {
             class_name: "Weaver".to_string(),
             missions: vec!["A-1: Packing Materials I".to_string()],
             time_period: "8:00PM - 9:59PM".to_string(),
-            target_hour: 20,
-            target_minute: 0,
+            target_time: EorzeanTime::new(20, 0),
         },
         MissionData {
             class_name: "Alchemist".to_string(),
             missions: vec!["A-1: Nutrient Jelly Materials I".to_string()],
             time_period: "12:00 AM - 1:59 AM".to_string(),
-            target_hour: 0,
-            target_minute: 0,
+            target_time: EorzeanTime::new(0, 0),
         },
         MissionData {
             class_name: "Culinarian".to_string(),
             missions: vec!["A-1: Nutrient-rich Foodstuffs I".to_string()],
             time_period: "4:00AM - 5:59AM".to_string(),
-            target_hour: 4,
-            target_minute: 0,
+            target_time: EorzeanTime::new(4, 0),
         },
         MissionData {
             class_name: "Miner".to_string(),
             missions: vec!["A-1: Fine-grade Air Filter Materials I".to_string()],
             time_period: "2:00AM - 3:59AM".to_string(),
-            target_hour: 2,
-            target_minute: 0,
+            target_time: EorzeanTime::new(2, 0),
         },
         MissionData {
             class_name: "Botanist".to_string(),
             missions: vec!["A-1: Fine-grade Air Filter Materials I".to_string()],
             time_period: "10:00AM - 11:59AM".to_string(),
-            target_hour: 10,
-            target_minute: 0,
+            target_time: EorzeanTime::new(10, 0),
         },
         MissionData {
             class_name: "Fisher".to_string(),
             missions: vec!["A-1: Aetherochemical Samples I".to_string()],
             time_period: "6:00AM - 7:59AM".to_string(),
-            target_hour: 6,
-            target_minute: 0,
+            target_time: EorzeanTime::new(6, 0),
         },
     ];
 
-    mission_data.sort_by_key(|d| d.target_hour);
+    mission_data.sort_by_key(|d| d.target_time.clone());
 
     let schedule: Vec<MissionInfo> = mission_data
         .into_iter()
         .map(|data| {
-            let target_time = EorzeanTime::new(data.target_hour, data.target_minute);
+            let target_time = data.target_time;
             let current_eorzean_time = EorzeanTime::from_chrono_time(Utc::now());
             let is_active = current_eorzean_time >= target_time
                 && current_eorzean_time < target_time.plus_hours(2);
@@ -197,7 +184,7 @@ pub fn get_mission_schedule() -> JsValue {
                 } else {
                     format_interval(target_time.interval_until_chrono())
                 },
-                next_local_time: find_next_local_time(data.target_hour, data.target_minute),
+                next_local_time: find_next_local_time(target_time),
             }
         })
         .collect();
@@ -239,9 +226,7 @@ fn format_interval(d: Duration) -> String {
     }
 }
 
-pub fn find_next_local_time(eorzean_hour: u64, eorzean_minute: u64) -> String {
-    let t = EorzeanTime::new(eorzean_hour, eorzean_minute);
-
+pub fn find_next_local_time(t: EorzeanTime) -> String {
     t.find_next_chrono_time()
         .with_timezone(&Local)
         .format("%Y-%m-%d %H:%M:%S")

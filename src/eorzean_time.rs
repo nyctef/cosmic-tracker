@@ -71,9 +71,15 @@ impl EorzeanTime {
 
 impl PartialOrd for EorzeanTime {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for EorzeanTime {
+    fn cmp(&self, other: &Self) -> Ordering {
         let self_total_minutes = self.hours * 60 + self.minutes;
         let other_total_minutes = other.hours * 60 + other.minutes;
-        self_total_minutes.partial_cmp(&other_total_minutes)
+        self_total_minutes.cmp(&other_total_minutes)
     }
 }
 
